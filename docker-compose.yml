@@ -31,45 +31,69 @@ services:
     networks:
       - internal
 
-  products:
+  greeterReplica:
     build:
       context: .
     image: molecular
     env_file: docker-compose.env
     environment:
-      SERVICES: products
+      SERVICES: greeter
     depends_on:
-      - mongo
+      - nats
+    networks:
+      - internal
+  
+  helper:
+    build:
+      context: .
+    image: molecular
+    env_file: docker-compose.env
+    environment:
+      SERVICES: helper
+    depends_on:
       - nats
     networks:
       - internal
 
-  mongo:
-    image: mongo:4
-    volumes:
-      - data:/data/db
-    networks:
-      - internal
+  # products:
+  #   build:
+  #     context: .
+  #   image: molecular
+  #   env_file: docker-compose.env
+  #   environment:
+  #     SERVICES: products
+  #   depends_on:
+  #     - mongo
+  #     - nats
+  #   networks:
+  #     - internal
+
+  # mongo:
+  #   image: mongo:4
+  #   volumes:
+  #     - data:/data/db
+  #   networks:
+  #     - internal
 
   nats:
     image: nats:2
     networks:
       - internal
 
-  traefik:
-    image: traefik:v2.1
-    command:
-      - "--api.insecure=true" # Don't do that in production!
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-    ports:
-      - 3000:80
-      - 3001:8080
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - internal
-      - default
+  # traefik:
+  #   image: traefik:v2.1
+  #   command:
+  #     - "--api.insecure=true" # Don't do that in production!
+  #     - "--providers.docker=true"
+  #     - "--providers.docker.exposedbydefault=false"
+  #   ports:
+  #     - 3000:80
+  #     - 3001:8080
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   networks:
+  #     - internal
+  #     - default
 
 networks:
   internal:
