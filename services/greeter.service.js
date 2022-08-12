@@ -33,10 +33,11 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const payload = `Hello from greeter ${this.broker.nodeID}`;
+				const number = await ctx.call("helper.random");
 
-				ctx.emit("hello.called", payload);
+				ctx.emit("hello.called", { payload, number });
 
-				return payload;
+				return { payload, number };
 			},
 		},
 
